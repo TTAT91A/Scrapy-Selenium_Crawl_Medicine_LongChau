@@ -2,7 +2,7 @@ name: run scrapy LongChau-medicine
 
 on:
   schedule:
-    - cron: '0 1 * * *' # At 0h everyday
+    - cron: '0 11 * * *' # At 8h everyday ~ 18h GMT+7
 
 jobs:
   build:
