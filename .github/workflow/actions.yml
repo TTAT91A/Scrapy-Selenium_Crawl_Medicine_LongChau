@@ -1,0 +1,52 @@
+name: run scrapy LongChau-medicine 
+
+on:
+  schedule:
+    - cron: '0 1 * * *' # At 0h everyday
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' # install the python version needed
+
+      - name: Set up virtual environment
+        run: python -m venv venv
+
+      - name: Activate virtual environment
+        run: source venv/bin/activate
+        
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: execute py script # run main.py
+        run: |
+          cd medicineScraper/medicineScraper/spiders
+          scrapy crawl medicineSpider -o $GITHUB_WORKSPACE/data/data.json -t json
+    
+      - name: Commit and push data
+        run: |
+          git config --global user.email "anhtuan.ltqb@gmail.com"
+          git config --global user.name "TTAT91A"
+          git add data/
+          git commit -m "Add data file"
+          # git push origin main
+          git diff-index --quiet HEAD || (git commit -a -m "updated logs" --allow-empty)
+
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main 
+  
+
+          
